@@ -1,0 +1,42 @@
+﻿<Properties StartupConfiguration="{4C132A36-6BAD-457D-9D0C-B60213DEDF86}|Default">
+  <MonoDevelop.Ide.ItemProperties.10mindungeon PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="10mindungeon" expanded="True">
+            <Node name="10mindungeon" expanded="True">
+              <Node name="References" expanded="True" />
+            </Node>
+            <Node name="event_store" expanded="True" />
+            <Node name="game_objects" expanded="True">
+              <Node name="References" expanded="True" />
+              <Node name="game_objects.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State name="__root__">
+          <Node name="10mindungeon" expanded="True" selected="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.event__store FirstBuild="True" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations>
+    <MultiItemSolutionRunConfiguration Id="build" Name="build">
+      <Items>
+        <StartupItem ItemId="{4C132A36-6BAD-457D-9D0C-B60213DEDF86}" ItemName="10mindungeon" ConfigurationId="Default" />
+      </Items>
+    </MultiItemSolutionRunConfiguration>
+  </MultiItemStartupConfigurations>
+</Properties>

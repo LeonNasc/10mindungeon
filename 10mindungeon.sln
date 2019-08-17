@@ -1,0 +1,35 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "10mindungeon", "10mindungeon.csproj", "{4C132A36-6BAD-457D-9D0C-B60213DEDF86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "game_objects", "game_objects\game_objects.csproj", "{90D415FD-3DE2-4CFA-B389-CDF9804ADE1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "event_store", "event_store\event_store.csproj", "{E6449F09-4DA0-49FD-98AA-1388B1A4E9EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C132A36-6BAD-457D-9D0C-B60213DEDF86}.Debug|x86.ActiveCfg = Debug|x86
+		{4C132A36-6BAD-457D-9D0C-B60213DEDF86}.Debug|x86.Build.0 = Debug|x86
+		{4C132A36-6BAD-457D-9D0C-B60213DEDF86}.Release|x86.ActiveCfg = Release|x86
+		{4C132A36-6BAD-457D-9D0C-B60213DEDF86}.Release|x86.Build.0 = Release|x86
+		{90D415FD-3DE2-4CFA-B389-CDF9804ADE1A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{90D415FD-3DE2-4CFA-B389-CDF9804ADE1A}.Debug|x86.Build.0 = Debug|Any CPU
+		{90D415FD-3DE2-4CFA-B389-CDF9804ADE1A}.Release|x86.ActiveCfg = Release|Any CPU
+		{90D415FD-3DE2-4CFA-B389-CDF9804ADE1A}.Release|x86.Build.0 = Release|Any CPU
+		{E6449F09-4DA0-49FD-98AA-1388B1A4E9EF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E6449F09-4DA0-49FD-98AA-1388B1A4E9EF}.Debug|x86.Build.0 = Debug|Any CPU
+		{E6449F09-4DA0-49FD-98AA-1388B1A4E9EF}.Release|x86.ActiveCfg = Release|Any CPU
+		{E6449F09-4DA0-49FD-98AA-1388B1A4E9EF}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$0.StandardHeader = $2
+	EndGlobalSection
+EndGlobal
