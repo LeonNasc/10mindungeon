@@ -1,17 +1,23 @@
 ﻿using System;
+using TenMinEvents;
 
 namespace TenMinDungeon
 {
+    public class Jogador
+    {
+        protected int _PVs { get; set; }
+        protected string[] _ultimas_acoes { get; set; }
+        protected int _turno { get; set; }
+        protected string _nome { get; set; }
+    }
     /// <summary>
     /// Representa um mestre no jogo de RPG
     /// </summary>
-    public class Mestre
+    public class Mestre:Jogador
     {
-
-        public int PVs { get; set; }
-        public string[] ultimas_acoes;
-        private int turno;
-        public string nome;
+        private BolsaDeEventos _reveses { get; }
+        private BolsaDeEventos _desafios { get; }
+        private BolsaDeEventos _masmorras { get; }
 
         /// <summary>
         /// Inicia um novo objeto do tipo <c>Mestre</c>
@@ -19,76 +25,112 @@ namespace TenMinDungeon
         /// <param name="nome">Nome do mestre inicalizado</param>
         public Mestre(string nome)
         {
-            this.turno = 0;
-            this.nome = nome;
-            this.ultimas_acoes = new string[20];
+            this._turno = 0;
+            this._nome = nome;
+            this._ultimas_acoes = new string[10];
+            this._reveses = new BolsaDeEventos("Reves");
+            this._desafios = new BolsaDeEventos("Desafio");
+            this._masmorras = new BolsaDeEventos("Masmorra");
 
+            Console.WriteLine("---------====---------");
             Console.WriteLine("Seja bem vindo, {0}! Espero que você toque o terror!", nome);
+            Console.WriteLine("---------====---------\n");
         }
 
-        public string realizarAcao()
+        /// <summary>
+        /// Define a ação do mestre para o turno. 
+        /// </summary>
+        /// <returns>Um cenário para os heróis</returns>
+        public Cenario[] RealizarAcao()
         {
             Console.WriteLine("Qual será a ação do mestre?");
-            //TODO: Ordem -> Selecionar Desafio, Revés (opcional), Masmorra (Opcional) -> Exibir cenários
-            return ultimas_acoes[this.turno];
+
+            //Ordem -> Selecionar Desafio, Revés (opcional), Masmorra (Opcional) -> Exibir cenários
+            Desafio desafio = (Desafio) this._desafios.ObterNovoEvento();
+            Masmorra masmorra = (Masmorra) this._masmorras.ObterNovoEvento();
+            Reves reves = (Reves) this._reveses.ObterNovoEvento();
+
+            (int base_fis, int base_mag)= this.CalcularDesafio(desafio, masmorra, reves);
+
+            return desafio.ObterCenarios();
         }
 
+        /// <summary>
+        /// Calcula o desafio base do cenário.
+        /// </summary>
+        /// <returns>Uma tupla com o desafio base fisico e mágico</returns>
+        /// <param name="d">O desafio (obrigatório)</param>
+        /// <param name="m">A masmorra (obrigatório).</param>
+        /// <param name="r">O revés (opcional)</param>
+        private (int, int) CalcularDesafio(Desafio d, Masmorra m, Reves r)
+        {
+            int mod_FIS, mod_MAG;
+
+            (int r_fis, int r_mag) = r.UtilizarEvento();
+            (int d_fis, int d_mag) = d.UtilizarEvento();
+            (int m_fis,int m_mag) = m.UtilizarEvento();
+
+            mod_FIS = r_fis + d_fis + m_fis;
+            mod_MAG = r_mag + d_mag + m_mag;
+
+            return (mod_FIS,mod_MAG);
+        }
     }
 
-    public class Jogador
+    public class Heroi:Jogador
     {
 
-        public int PVs { get; set; }
-        public string nome;
-        private int turno;
-        public string classe { get; set; }
+        private string _classe { get; set; }
+        private string _raca { get; set; }
+        private BolsaDeEventos _benesses { get; }
+        private BolsaDeEventos _items { get; }
 
-        public Jogador(string nome, string classe)
+        public Heroi(string nome, string classe, string raca)
         {
-            this.turno = 0;
-            this.nome = nome;
-            this.classe = classe;
+            this._turno = 0;
+            this._nome = nome;
+            this._classe = classe;
+            this._raca = raca;
 
             Console.WriteLine("Incrível! {0}, o(a) {1} está pronto para aventura!", nome, classe);
         }
 
-        public int escolherAcao()
+        public int EscolherAcao()
         {
 
-            Console.WriteLine("{0}, qual será sua ação para o {1}?", this.nome,this.turno);
+            Console.WriteLine("{0}, qual será sua ação para o {1}?", this._nome,this._turno);
             //TODO: Ordem -> Selecionar Benesses/Itens -> Selecionar ação
             return Convert.ToInt32(Console.ReadLine());
-
         }
     }
 
     public class Sessao
     {
-        public Mestre mestre { get; set; }
-        public Jogador[] equipe;
+        private Mestre _mestre { get; set; }
+        private Jogador[] _equipe { get; set; }
 
         public Sessao()
         {
 
             //Prepara todos os jogadores para a partida
-            this.configurarMestre();
-            this.configurarEquipe();
+            this.ConfigurarMestre();
+            this.ConfigurarEquipe();
 
             //Jogo em si
-            this.jogarTurno();
+            this.JogarTurno();
         }
 
-        private void configurarMestre()
+        private void ConfigurarMestre()
         {
             //Seta um mestre para a sessão!
             Console.WriteLine("Quem será o mestre?  Insira seu nome");
-            this.mestre = new Mestre(Console.ReadLine());
+            this._mestre = new Mestre(Console.ReadLine());
 
         }
 
-        private void configurarEquipe()
+        private void ConfigurarEquipe()
         {
-            this.equipe = new Jogador[5];
+            this._equipe = new Heroi[5];
             string option = "Y";
             int jogadores = 0;
 
@@ -98,7 +140,9 @@ namespace TenMinDungeon
                 string nome = Console.ReadLine();
                 Console.WriteLine("Qual será a sua classe?");
                 string classe = Console.ReadLine();
-                this.equipe[jogadores++] = new Jogador(nome, classe);
+                Console.WriteLine("Qual será a sua raça?");
+                string raca = Console.ReadLine();
+                this._equipe[jogadores++] = new Heroi(nome, classe, raca);
 
                 Console.WriteLine("Deseja incluir mais um jogador?");
                 option = Console.ReadLine();
@@ -106,21 +150,21 @@ namespace TenMinDungeon
             Console.WriteLine("Ok! Todos prontos");
         }
 
-        public void jogarTurno()
+        public void JogarTurno()
         {
-            int[] acoes = new int[this.equipe.Length];
+            int[] acoes = new int[this._equipe.Length];
             int jog_atual = 0;
 
             Console.WriteLine("-=-=-=-=-=-=-=-=");
             //Ação do mestre
-            this.mestre.realizarAcao();
+            this._mestre.RealizarAcao();
 
             Console.WriteLine("-=-=-=-=-=-=-=-=");
 
             //Ação dos jogadores
-            foreach (Jogador jogador in equipe)
+            foreach (Heroi jogador in this._equipe)
             {
-                acoes[jog_atual] = jogador.escolherAcao();
+                acoes[jog_atual] = jogador.EscolherAcao();
                 Console.WriteLine("-=-=-=-=-=-=-=-=");
                 jog_atual++;
             }

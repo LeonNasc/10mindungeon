@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TenMinEvents
 {
-/// <summary>
-/// Representa um armazém de eventos de jogo.
-/// Na versão final, este armazém será utilizado a partir de outro arquivo
-/// Utiliza o padrão strategy para o tipo de evento utilizado
-/// </summary>
+    /// <summary>
+    /// Representa um armazém de eventos de jogo.
+    /// Na versão final, este armazém será utilizado a partir de outro arquivo
+    /// Utiliza o padrão strategy para o tipo de evento utilizado
+    /// </summary>
     public class BolsaDeEventos
     {
         private List<Evento> _eventos = new List<Evento>();
@@ -27,7 +28,7 @@ namespace TenMinEvents
         /// <returns>The novo evento.</returns>
         public Evento ObterNovoEvento()
         {
-            return this._eventos.OrderBy(t => Guid.NewGuid()).Take(1)[0];
+            return Enumerable.Take(_eventos.OrderBy(t => Guid.NewGuid()), 1).ToArray()[0];
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace TenMinEvents
             //TODO: Implementar ler de um JSON inicialmente
             while (true)
             {
-                this._eventos.add(1);
+                _eventos.Add(new Evento());
             }
         }
     }
@@ -49,17 +50,72 @@ namespace TenMinEvents
     /// </summary>
     public class Evento
     {
-        private string _nome { get; } //Nome do evento
-        private string _descricao { get; set; } //Fala sobre o evento
-        private string _evento_id { get; } //Identificador único
-        private int _raridade { get; set; } //C, R, UR
-        private string _img_url { get; } //ilustracao
+        protected string _nome;  //Nome do evento
+        protected string _descricao; //Fala sobre o evento
+        protected string _evento_id;//Identificador único
+        protected string _raridade;//C, R, UR
+        protected string _img_url;//ilustracao
 
         /// <summary>
         /// Utiliza um evento no inventório do jogador/mestre
         /// </summary>
-        public abstract string UtilizarEvento();
-   }
+        public virtual string[] UtilizarEvento()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Utilizavel: Evento
+    {
+        /// <summary>
+        /// Tipo da benesse. Apresenta o formato {tipo:[limitacoes]}.
+        /// </summary>
+        protected string _tipo;//Fisica, mágica, raça, classe
+        protected string[] _limitacoes;
+        protected int _mod;//-n ou +n
+
+        /// <summary>
+        /// Utiliza a benesse após verificar se o jogador é capaz de usá-la
+        /// </summary>
+        /// <returns>o nome, o modificador e a descrição </returns>
+        public (int,int) UtilizarEvento(string dado_jogador)
+        {
+            //Retorna o modificador a ser aplicado, a restrição e a descricao
+            if (this.ValidarUtilizavel(dado_jogador.Split(','))){
+                return (this._mod,this._mod);
+            }
+            else {
+                //TODO: Lançar exceçao
+                Console.WriteLine("O jogador não pode utilizar: {0}", this._nome);
+                throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Valida se o jogador pode utilizar o evento
+        /// </summary>
+        /// <returns><c>true</c>, se for possível, <c>false</c> se não.</returns>
+        /// <param name="dados_jogador">Dados do jogador.</param>
+        private Boolean ValidarUtilizavel(string[] dados_jogador)
+        {
+            foreach (string dado_jogador in dados_jogador)
+            {
+                foreach (string limitacao in this._limitacoes)
+                {
+                    if (dado_jogador == limitacao)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public class Cena : Evento
+    {
+        protected int _desafio_fis;//-n ou +n
+        protected int _desafio_mag;//-n ou +n
+    }
 
     /// <summary>
     /// Benesses são eventos atrelados ao jogador.
@@ -74,32 +130,20 @@ namespace TenMinEvents
     /// Benesses são geradas no momento da escolha da classe e raça 
     /// E a cada 3 níveis (4, 7, 10)
     /// </remarks>
-    public class Benesse: Evento
+    public class Benesse: Utilizavel
     {
-        private int _mod { get; } //-n ou +n
-        /// <summary>
-        /// Tipo da benesse. Apresenta o formato {tipo, limitacao}.
-        /// </summary>
-        private string _tipo { get; } //Fisica, mágica, raça, classe
-
         public Benesse(string[] dados_benesse)
         {
             //Destrutura os dados do JSON no objeto instanciado
             this._evento_id = dados_benesse[0];
             this._tipo = dados_benesse[1];
-            this._raridade = dados_benesse[2];
-            this._nome = dados_benesse[3]
-            this._descricao = dados_benesse[4];
-            this._mod = dados_benesse[5];
-            this._img_url = dados_benesse[6];
+            this._limitacoes = dados_benesse[2].Split(',');
+            this._raridade = dados_benesse[3];
+            this._nome = dados_benesse[4];
+            this._descricao = dados_benesse[5];
+            this._mod = Convert.ToInt32(dados_benesse[6]);
+            this._img_url = dados_benesse[7];
         }
-
-        public string[] UtilizarEvento()
-        {
-            //Retorna o modificador a ser aplicado, a restrição e a descricao
-            return [this.]
-        }
-
     }
 
     /// <summary>
@@ -118,11 +162,22 @@ namespace TenMinEvents
     /// <remarks>
     /// Espolios são concedidos quando um jogador supera um desafio (ganha um nível) 
     /// </remarks>
-    public class Espolio : Evento
+    public class Espolio : Utilizavel
     {
+        private int _preco { get; set; }
+
         public Espolio(string[] dados_espolio)
         {
-
+            //Destrutura os dados do JSON no objeto instanciado
+            this._evento_id = dados_espolio[0];
+            this._tipo = dados_espolio[1];
+            this._limitacoes = dados_espolio[2].Split(',');
+            this._raridade = dados_espolio[3];
+            this._nome = dados_espolio[4];
+            this._descricao = dados_espolio[5];
+            this._mod = Convert.ToInt32(dados_espolio[6]);
+            this._img_url = dados_espolio[7];
+            this._preco = Convert.ToInt32(dados_espolio[8]);
         }
     }
     /// <summary>
@@ -139,15 +194,38 @@ namespace TenMinEvents
     /// <remarks>
     /// Reveses são um dos três itens que compõem um cenário 
     /// </remarks>
-    public class Reves: Evento
+    public class Reves : Cena
     {
-
-        public Reves (string[] dados_reves)
+        public Reves(string[] dados_reves)
         {
+            this._evento_id = dados_reves[0];
+            this._raridade = dados_reves[1];
+            this._nome = dados_reves[2];
+            this._descricao = dados_reves[3];
+            this._img_url = dados_reves[4];
+            this._desafio_fis = Convert.ToInt32(dados_reves[5]);
+            this._desafio_mag = Convert.ToInt32(dados_reves[6]);
+        }
 
+        public new (int,int) UtilizarEvento(){
+            return (1,1);
         }
     }
 
+    /// <summary>
+    /// Modelo padrão de cenário para desafios
+    /// </summary>
+    public class Cenario
+    {
+        public string opcao;
+        public int modificador;
+
+        public Cenario()
+        {
+            opcao = "A equipe tenta fugir!";
+            modificador = 1;
+        }
+    }
     /// <summary>
     /// Desafios são colocados a cada turno pelo mestre para gerar 
     /// dificuldades para os jogadores.
@@ -157,7 +235,7 @@ namespace TenMinEvents
     /// O mestre decide colocar um dragão com escamas de pedra.
     /// 
     /// >O desafio para enfrentar o dragão é 20 FIS/16 MAG
-    /// >O desafio para enganar o dragão é 18 CHAR
+    /// >O desafio para enganar o dragão é 22 MAG
     /// >O desafio para despistar o dragão é 18 FIS/18 MAG
     /// >Fugir tem um desafio de 20
     ///
@@ -168,14 +246,58 @@ namespace TenMinEvents
     ///
     /// Apresentam opções que devem ser escolhidas pelos jogadores
     /// </remarks>
-    public class Desafio: Evento
+    public class Desafio: Cena
     {
+        private int _desafio_base { get; set; }
+        private string _texto_base { get; set; }
+        private string _texto_fis { get; set; }
+        private string _texto_mag { get; set; }
 
         public Desafio(string[] dados_desafio)
         {
+            this._evento_id = dados_desafio[0];
+            this._raridade = dados_desafio[1];
+            this._nome = dados_desafio[2];
+            this._descricao = dados_desafio[3];
+            this._img_url = dados_desafio[4];
+            this._desafio_base = Convert.ToInt32(dados_desafio[5]);
+            this._desafio_fis = Convert.ToInt32(dados_desafio[6]);
+            this._desafio_mag = Convert.ToInt32(dados_desafio[7]);
+            this._texto_base = dados_desafio[8];
+            this._texto_fis = dados_desafio[9];
+            this._texto_mag = dados_desafio[10];
+        }
 
+        /// <summary>
+        /// Obtém as opções de jogo para os jogadores de um desafio
+        /// </summary>
+        /// <returns>Os cenarios.</returns>
+        /// <remarks>
+        /// Existem 3 tipos de desafio:
+        /// + Fisico (Derrubar uma porta)
+        /// + Magico (Utilizar uma magia de destravamento)
+        /// + Alternativo (Tentar abrir a fechadura)  
+        /// </remarks>
+        public Cenario[] ObterCenarios()
+        {
+            Cenario desafio_fis = new Cenario();
+            Cenario desafio_mag = new Cenario();
+            Cenario desafio_alt = new Cenario();
+
+            return new Cenario[]{desafio_fis, desafio_mag, desafio_alt};
+        }
+
+        /// <summary>
+        /// Utilizado para calcular o desafio base
+        /// </summary>
+        /// <returns>O desafio base para desafio.</returns>
+        public new(int, int) UtilizarEvento()
+        {
+            return (1, 1);
         }
     }
+
+
 
     /// <summary>
     /// Masmorras são os locais onde os desafios ocorrem.
@@ -195,11 +317,20 @@ namespace TenMinEvents
     /// <remarks>
     /// Masmorras são um dos três itens que compõem um cenário 
     /// </remarks>
-    public class Masmorra : Evento
+    public class Masmorra : Cena
     {
         public Masmorra(string[] dados_masmorra)
         {
 
+        }
+
+        /// <summary>
+        /// Afeta o modificador do desafio
+        /// </summary>
+        /// <returns>O modificador para o desafio base.</returns>
+        public new(int, int) UtilizarEvento()
+        {
+            return (1, 1);
         }
     }
 }
