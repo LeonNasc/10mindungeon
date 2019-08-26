@@ -25,22 +25,19 @@ namespace TenMinDungeon
         private Game()
         {
             Console.WriteLine("Estou carregando os dados do jogo");
-
-            //Carrega os dados do jogo
-            SampleGameObject objeto = new SampleGameObject();
-
         }
 
         ~Game()
         {
             //Limpa os assets e fecha o jogo
-            Console.WriteLine("Thanks for playing");
+            Console.WriteLine("Obrigado por jogar playing");
         }
 
         private void start()
         {
 
             Sessao sessao = new Sessao();
+            sessao.Iniciar();
         }
     }
 

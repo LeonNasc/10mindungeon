@@ -5,14 +5,11 @@
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="10mindungeon" expanded="True">
-            <Node name="10mindungeon" expanded="True">
-              <Node name="References" expanded="True" />
+            <Node name="10mindungeon" expanded="True" />
+            <Node name="event_store" expanded="True">
+              <Node name="event_store.cs" selected="True" />
             </Node>
-            <Node name="event_store" expanded="True" />
-            <Node name="game_objects" expanded="True">
-              <Node name="References" expanded="True" />
-              <Node name="game_objects.cs" selected="True" />
-            </Node>
+            <Node name="game_objects" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -26,7 +23,6 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.event__store FirstBuild="True" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

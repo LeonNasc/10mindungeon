@@ -15,9 +15,9 @@ namespace TenMinDungeon
     /// </summary>
     public class Mestre:Jogador
     {
-        private BolsaDeEventos _reveses { get; }
-        private BolsaDeEventos _desafios { get; }
-        private BolsaDeEventos _masmorras { get; }
+        private BolsaDeEventos _reveses { get; } = new BolsaDeEventos("Reves");
+        private BolsaDeEventos _desafios { get; } = new BolsaDeEventos("Desafio");
+        private BolsaDeEventos _masmorras { get; } = new BolsaDeEventos("Masmorra");
 
         /// <summary>
         /// Inicia um novo objeto do tipo <c>Mestre</c>
@@ -28,9 +28,6 @@ namespace TenMinDungeon
             this._turno = 0;
             this._nome = nome;
             this._ultimas_acoes = new string[10];
-            this._reveses = new BolsaDeEventos("Reves");
-            this._desafios = new BolsaDeEventos("Desafio");
-            this._masmorras = new BolsaDeEventos("Masmorra");
 
             Console.WriteLine("---------====---------");
             Console.WriteLine("Seja bem vindo, {0}! Espero que você toque o terror!", nome);
@@ -50,11 +47,21 @@ namespace TenMinDungeon
             Masmorra masmorra = (Masmorra) this._masmorras.ObterNovoEvento();
             Reves reves = (Reves) this._reveses.ObterNovoEvento();
 
+            this.ApresentarDesafio(desafio, masmorra, reves);
             (int base_fis, int base_mag)= this.CalcularDesafio(desafio, masmorra, reves);
 
             return desafio.ObterCenarios();
         }
 
+        private void ApresentarDesafio(Desafio d, Masmorra m, Reves r)
+        {
+            Console.WriteLine($"{_nome} preparou o seguinte evento\n");
+            Console.WriteLine($"{d._nome} \n -=-=-=-=-=-");
+            Console.WriteLine($"{d._descricao} \n -=-=-=-=-=-");
+            Console.WriteLine($"Masmorra: {m._nome} : {m._descricao}");
+            Console.WriteLine($"Reves: {d._nome} : {d._descricao}");
+            Console.WriteLine("-=-=-=-=-=-");
+        }
         /// <summary>
         /// Calcula o desafio base do cenário.
         /// </summary>
@@ -82,8 +89,8 @@ namespace TenMinDungeon
 
         private string _classe { get; set; }
         private string _raca { get; set; }
-        private BolsaDeEventos _benesses { get; }
-        private BolsaDeEventos _items { get; }
+        private BolsaDeEventos _benesses { get; } = new BolsaDeEventos("Benesses");
+        private BolsaDeEventos _items { get; } = new BolsaDeEventos("Espólios");
 
         public Heroi(string nome, string classe, string raca)
         {
@@ -116,16 +123,13 @@ namespace TenMinDungeon
             this.ConfigurarMestre();
             this.ConfigurarEquipe();
 
-            //Jogo em si
-            this.JogarTurno();
-        }
+       }
 
         private void ConfigurarMestre()
         {
             //Seta um mestre para a sessão!
             Console.WriteLine("Quem será o mestre?  Insira seu nome");
             this._mestre = new Mestre(Console.ReadLine());
-
         }
 
         private void ConfigurarEquipe()
@@ -157,7 +161,12 @@ namespace TenMinDungeon
 
             Console.WriteLine("-=-=-=-=-=-=-=-=");
             //Ação do mestre
-            this._mestre.RealizarAcao();
+            Cenario[] cenarios = this._mestre.RealizarAcao();
+
+            for(int i = 0; i<cenarios.Length;i++)
+            {
+                Console.WriteLine($"{i} - {cenarios[i]._opcao}");
+            }
 
             Console.WriteLine("-=-=-=-=-=-=-=-=");
 
@@ -170,6 +179,12 @@ namespace TenMinDungeon
             }
 
             //TODO: ROLAR DADOS
+        }
+
+        public void Iniciar()
+        {
+            //Jogo em si
+            this.JogarTurno();
         }
     }
 }

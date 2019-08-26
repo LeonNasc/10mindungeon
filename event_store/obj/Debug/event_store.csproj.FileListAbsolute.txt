@@ -1,0 +1,5 @@
+/home/leon/Documents/dev/10mindungeon/event_store/bin/Debug/event_store.dll
+/home/leon/Documents/dev/10mindungeon/event_store/bin/Debug/event_store.pdb
+/home/leon/Documents/dev/10mindungeon/event_store/obj/Debug/event_store.csproj.CoreCompileInputs.cache
+/home/leon/Documents/dev/10mindungeon/event_store/obj/Debug/event_store.dll
+/home/leon/Documents/dev/10mindungeon/event_store/obj/Debug/event_store.pdb
